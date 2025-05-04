@@ -72,15 +72,38 @@ function showDetails(item) {
 // Handle server switching and embedding the video
 function changeServer() {
     const server = document.getElementById('server').value;
-    const type = currentItem.media_type === "movie" ? "movie" : "tv";
-    let embedURL = STREAMING_SERVERS[server] + `${currentItem.id}`;
 
-    // If the selected server is unavailable or invalid, fall back to another server
-    if (!embedURL || !STREAMING_SERVERS[server]) {
-        alert('Selected server is not available or invalid, trying fallback...');
-        const fallbackServer = Object.values(STREAMING_SERVERS)[0]; // Use the first available server as fallback
-        embedURL = fallbackServer + `${currentItem.id}`;
+    if (!currentItem) return;
+
+    const title = (currentItem.title || currentItem.name || '').replace(/\s+/g, '-').toLowerCase();
+    const imdbID = currentItem.id; // TMDB ID (not actual IMDB)
+
+    let embedURL = '';
+
+    switch (server) {
+        case 'vidsrc':
+            // Vidsrc only supports some movies and shows
+            embedURL = `https://vidsrc.to/embed/${currentItem.media_type}/${currentItem.id}`;
+            break;
+        case '2embed':
+            // For movies only
+            if (currentItem.media_type === 'movie') {
+                embedURL = `https://www.2embed.to/embed/tmdb/movie?id=${currentItem.id}`;
+            } else {
+                embedURL = `https://www.2embed.to/embed/tmdb/tv?id=${currentItem.id}`;
+            }
+            break;
+        case 'multiembed':
+            // Use Multiembed for fallback
+            embedURL = `https://multiembed.mov/?video_id=${currentItem.id}&tmdb=1`;
+            break;
+        default:
+            // fallback if unknown server
+            embedURL = `https://multiembed.mov/?video_id=${currentItem.id}&tmdb=1`;
     }
+
+    document.getElementById('modal-video').src = embedURL;
+}
 
     document.getElementById('modal-video').src = embedURL;
 }
