@@ -84,6 +84,8 @@ function changeServer() {
     embedURL = `https://vidsrc.net/embed/${type}/?tmdb=${currentItem.id}`;
   } else if (server === "player.videasy.net") {
     embedURL = `https://player.videasy.net/${type}/${currentItem.id}`;
+  } else if (server === "hdvb") {
+    embedURL = `https://multiembed.mov/directstream.php?video_id=${currentItem.id}&tmdb=1`; // HDVB style URL
   }
 
   document.getElementById('modal-video').src = embedURL;
