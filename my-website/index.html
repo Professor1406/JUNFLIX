@@ -1,87 +1,168 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Website</title>
-  <link rel="stylesheet" href="css/home.css">
-  <link rel="preload" href="css/home.css" as="style">
-  <link rel="preload" href="js/home.js" as="script">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script defer src="js/home.js"></script>
+  <title>JUNFLIXTV - Watch Free</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    header {
+      background-color: #000;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: red;
+      display: flex;
+      align-items: center;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-left: auto;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .active {
+      font-weight: bold;
+      color: #0f0;
+    }
+
+    main {
+      padding: 1rem 2rem;
+    }
+
+    .video-container {
+      width: 100%;
+      max-width: 960px;
+      margin: 1rem auto;
+      position: relative;
+      padding-top: 56.25%;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    select {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .category-title {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+  </style>
 </head>
-
 <body>
-  <div class="navbar">
-    <img src="logo.png" alt="LOGO HERE" />
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <input type="text" class="search-bar" placeholder="Search..." onfocus="openSearchModal()" />
-    </div>
-  </div>
 
-  <div class="banner" id="banner">
-    <h1 id="banner-title"></h1>
-  </div>
+<header>
+  JUNFLIXTV
+  <nav>
+    <button onclick="switchCategory('movies')" class="active">Movies</button>
+    <button onclick="switchCategory('tv')">TV Shows</button>
+    <button onclick="switchCategory('anime')">Anime</button>
+    <button onclick="switchCategory('pinoy')">Pinoy Movies</button>
+    <button onclick="switchCategory('kdrama')">Korean Drama</button>
+  </nav>
+</header>
 
-  <div class="row">
-  <h2>Trending Korean Dramas</h2>
-  <div class="list" id="kdramas-list"></div>
-</div>
-<div class="row">
-  <h2>Trending Anime</h2>
-  <div class="list" id="anime-list"></div>
-</div>
-<div class="row">
-  <h2>Trending Movies</h2>
-  <div class="list" id="movies-list"></div>
-</div>
-<div class="row">
-  <h2>Trending TV Shows</h2>
-  <div class="list" id="tvshows-list"></div>
-</div>
+<main>
+  <div class="category-title" id="categoryTitle">Now Streaming: Movies</div>
 
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()" style="color: red;">&times;</span>
-      <div class="modal-body">
-  <img id="modal-image" src="" alt="" />
-  <div class="modal-text">
-    <h2 id="modal-title"></h2>
-    <div class="stars" id="modal-rating"></div>
-    <p id="modal-description"></p>
-  </div>
-</div>
-      
-      <div class="server-selector">
-        <label for="server">Change Server:</label>
-        <select id="server" onchange="changeServer()">
-          <option value="vidsrc.cc">Vidsrc.cc</option>
-          <option value="vidsrc.me">Vidsrc.me</option>
-          <option value="player.videasy.net">Player.Videasy.net</option>
-          <option value="hdvb">HDVB.to</option>
-        </select>
-      </div>
-      <iframe id="modal-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
-    </div>
-  </div>
+  <label for="serverSelect">Choose a server:</label>
+  <select id="serverSelect" onchange="changeServer(this.value)">
+    <!-- Movies API embeds -->
+    <option value="https://vidsrc.to/embed/movie/tt4154796">Server 1 (Low Ads)</option>
+    <option value="https://multiembed.mov/?video_id=tt4154796&tmdb=1">Server 2</option>
+    <option value="https://vidcloud9.org/embed/movie?imdb=tt4154796">Server 3</option>
+  </select>
 
-  <div class="search-modal" id="search-modal">
-    <span class="close" onclick="closeSearchModal()" style="color: red;">&times;</span>
-    <input type="text" id="search-input" placeholder="Search for a movie or show..." oninput="searchTMDB()" />
-    <div class="results" id="search-results"></div>
+  <div class="video-container">
+    <iframe id="videoPlayer" src="https://vidsrc.to/embed/movie/tt4154796" allowfullscreen></iframe>
   </div>
+</main>
 
-<footer class="footer">
-  <div class="footer-content">
-    <p>&copy; 2025 My Website. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="#">Disclaimer</a>
-      <a href="#">About Us</a>
-      <a href="#">Contact Us</a>
-    </div>
-  </div>
-</footer>
+<script>
+  const servers = {
+    movies: [
+      { label: "Server 1 (Low Ads)", url: "https://vidsrc.to/embed/movie/tt4154796" },
+      { label: "Server 2", url: "https://multiembed.mov/?video_id=tt4154796&tmdb=1" },
+      { label: "Server 3", url: "https://vidcloud9.org/embed/movie?imdb=tt4154796" }
+    ],
+    tv: [
+      { label: "Server 1 (Low Ads)", url: "https://vidsrc.to/embed/tv/1399/1/1" },
+      { label: "Server 2", url: "https://multiembed.mov/?video_id=tt0944947&tmdb=1&s=1&e=1" },
+      { label: "Server 3", url: "https://vidcloud9.org/embed/tv?imdb=tt0944947&season=1&episode=1" }
+    ],
+    anime: [
+      { label: "Server 1 (Low Ads)", url: "https://vidsrc.to/embed/anime/52991/1/1" },
+      { label: "Server 2", url: "https://multiembed.mov/?video_id=tt1234567&tmdb=1&s=1&e=1" },
+      { label: "Server 3", url: "https://vidcloud9.org/embed/anime?imdb=tt1234567&season=1&episode=1" }
+    ],
+    pinoy: [
+      { label: "Server 1 (Low Ads)", url: "https://vidsrc.to/embed/movie/tt8197990" },
+      { label: "Server 2", url: "https://multiembed.mov/?video_id=tt8197990&tmdb=1" },
+      { label: "Server 3", url: "https://vidcloud9.org/embed/movie?imdb=tt8197990" }
+    ],
+    kdrama: [
+      { label: "Server 1 (Low Ads)", url: "https://vidsrc.to/embed/tv/103411/1/1" },
+      { label: "Server 2", url: "https://multiembed.mov/?video_id=tt13720148&tmdb=1&s=1&e=1" },
+      { label: "Server 3", url: "https://vidcloud9.org/embed/tv?imdb=tt13720148&season=1&episode=1" }
+    ]
+  };
 
-  
+  function switchCategory(category) {
+    // Update video player and dropdown
+    const select = document.getElementById('serverSelect');
+    const player = document.getElementById('videoPlayer');
+    const title = document.getElementById('categoryTitle');
+    const navButtons = document.querySelectorAll('nav button');
+
+    navButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`nav button[onclick="switchCategory('${category}')"]`).classList.add('active');
+
+    title.textContent = `Now Streaming: ${capitalize(category.replace('tv', 'TV Shows').replace('kdrama', 'Korean Drama'))}`;
+
+    select.innerHTML = "";
+    servers[category].forEach(server => {
+      const option = document.createElement('option');
+      option.value = server.url;
+      option.textContent = server.label;
+      select.appendChild(option);
+    });
+
+    player.src = servers[category][0].url;
+  }
+
+  function changeServer(url) {
+    document.getElementById('videoPlayer').src = url;
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+</script>
+
 </body>
+</html>
