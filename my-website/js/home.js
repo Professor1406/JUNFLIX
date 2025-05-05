@@ -70,8 +70,43 @@ function showDetails(item) {
   document.getElementById('modal-rating').innerHTML = '★'.repeat(Math.round(item.vote_average / 2));
   changeServer();
   document.getElementById('modal').style.display = 'flex';
-}
 
+  async function fetchExtraDetails(tmdbId) {
+  const tmdbRes = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${API_KEY}&append_to_response=external_ids`);
+  const tmdbData = await tmdbRes.json();
+  const imdbID = tmdbData.imdb_id;
+
+  if (imdbID) {
+    fetchIMDbDetails(imdbID);
+    fetchTraktDetails(imdbID);
+  }
+}
+async function fetchIMDbDetails(imdbID) {
+  const res = await fetch(`https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=${imdbID}&currentCountry=US`, {
+    method: "GET",
+    headers: {
+      "X-RapidAPI-Key": "1fe6cf5639msh9c8d797536e7d47p192bb2jsnc56a3005c1b1",
+      "X-RapidAPI-Host": "imdb8.p.rapidapi.com"
+    }
+  });
+
+  const data = await res.json();
+  console.log("IMDb details", data);
+  // Optionally: show runtime, genres, plot summary etc.
+} 
+async function fetchTraktDetails(imdbID) {
+  const res = await fetch(`https://api.trakt.tv/movies/${imdbID}?extended=full`, {
+    headers: {
+      "Content-Type": "application/json",
+      "trakt-api-key": "ac546c48d4785be512b307374e9dfff78041ed94f344a121d7cff31b3447c296",
+      "trakt-api-version": "2"
+    }
+  });
+
+  const data = await res.json();
+  console.log("Trakt details", data);
+  // Optionally: show ratings, watch count, release year etc.
+}
 // Change server based on the user selection
 function changeServer() {
   const server = document.getElementById('server').value;
